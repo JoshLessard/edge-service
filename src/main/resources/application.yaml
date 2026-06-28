@@ -22,6 +22,10 @@ spring:
       server:
         webflux:
           routes:
+            - id: spa-route
+              uri: ${SPA_URL:http://localhost:9004}
+              predicates:
+                - Path=/,/*.css,/*.js,/favicon.ico
             - id: catalog-route
               uri: ${CATALOG_SERVICE_URL:http://localhost:9001}/books
               predicates:
@@ -76,9 +80,21 @@ spring:
       port: 6379
       timeout: 1s
   session:
+    data:
+      redis:
+        namespace: polar:edge
     timeout: 10m
-    redis:
-      namespace: polar:edge
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: edge-service
+            client-secret: polar-keycloak-secret
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/PolarBookshop
 resilience4j:
   circuitbreaker:
     configs:
